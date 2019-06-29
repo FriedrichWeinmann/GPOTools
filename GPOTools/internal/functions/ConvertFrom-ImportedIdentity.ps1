@@ -1,9 +1,32 @@
 ﻿function ConvertFrom-ImportedIdentity
 {
+<#
+	.SYNOPSIS
+		Converts an imported identity into a security principal.
+	
+	.DESCRIPTION
+		Converts an imported identity into a security principal.
+		This is used for granting permissions.
+	
+	.PARAMETER Permission
+		The permission object containing the source principal.
+	
+	.PARAMETER DomainObject
+		An object representing the destination domain (as returned by Get-ADDomain)
+	
+	.EXAMPLE
+		PS C:\> ConvertFrom-ImportedIdentity -Permission $permission -DomainObject $domainObject
+	
+		Resolves the source identity into a destination security principal.
+#>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseOutputTypeCorrectly", "")]
+	[OutputType([System.Security.Principal.IdentityReference])]
 	[CmdletBinding()]
 	param (
+		[Parameter(Mandatory = $true)]
 		$Permission,
 		
+		[Parameter(Mandatory = $true)]
 		$DomainObject
 	)
 	

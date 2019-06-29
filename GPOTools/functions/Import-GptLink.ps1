@@ -94,6 +94,7 @@
 		
 		function Set-GPLinkSet
 		{
+			[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 			[CmdletBinding()]
 			param (
 				$LinkObject,
