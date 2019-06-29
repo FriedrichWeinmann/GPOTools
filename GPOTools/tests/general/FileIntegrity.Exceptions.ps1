@@ -1,9 +1,9 @@
 ﻿# List of forbidden commands
 $global:BannedCommands = @(
 	'Write-Host',
-	'Write-Verbose',
-	'Write-Warning',
-	'Write-Error',
+	# 'Write-Verbose', # Until PSFramework implementation
+	# 'Write-Warning', # Until PSFramework implementation
+	# 'Write-Error',   # Until PSFramework implementation
 	'Write-Output',
 	'Write-Information',
 	'Write-Debug',
