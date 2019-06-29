@@ -1,33 +1,40 @@
 ﻿# Description
 
-Insert a useful description for the GPOTools project here.
+The GPOTools module is designed to handle all things GPO.
 
-Remember, it's the first thing a visitor will see.
+As a special focus, it tries to manage migrations, backup & restore.
 
-# Project Setup Instructions
-## Working with the layout
+# Examples
+## Installing the module
 
- - Don't touch the psm1 file
- - Place functions you export in `functions/` (can have subfolders)
- - Place private/internal functions invisible to the user in `internal/functions` (can have subfolders)
- - Don't add code directly to the `postimport.ps1` or `preimport.ps1`.
-   Those files are designed to import other files only.
- - When adding files you load during `preimport.ps1`, be sure to add corresponding entries to `filesBefore.txt`.
-   The text files are used as reference when compiling the module during the build script.
- - When adding files you load during `postimport.ps1`, be sure to add corresponding entries to `filesAfter.txt`.
-   The text files are used as reference when compiling the module during the build script.
+```powershell
+Install-Module GPOTools
+```
 
-## Setting up CI/CD
+## Backup
 
-> To create a PR validation pipeline, set up tasks like this:
+```powershell
+# Backup ALL GPOs
+Backup-GptPolicy -Path .
 
- - Install Prerequisites (PowerShell Task; VSTS-Prerequisites.ps1)
- - Validate (PowerShell Task; VSTS-Validate.ps1)
- - Publish Test Results (Publish Test Results; NUnit format; Run no matter what)
+# Backup just the ones you want
+Get-GPO -All | Where-Object $condition | Backup-GptPolicy -Path .
 
-> To create a build/publish pipeline, set up tasks like this:
+# Backup all policies that fit your desired name pattern
+Backup-GptPolicy -Path . -Name 'SEC-*'
+```
 
- - Install Prerequisites (PowerShell Task; VSTS-Prerequisites.ps1)
- - Validate (PowerShell Task; VSTS-Validate.ps1)
- - Build (PowerShell Task; VSTS-Build.ps1)
- - Publish Test Results (Publish Test Results; NUnit format; Run no matter what)
+## Restore
+
+```powershell
+# Restore everything
+Restore-GptPolicy -Path .
+
+# Restore just those policies you care about
+Restore-GptPolicy -Path . -Name 'SEC-*', 'Client-*'
+
+# Restore while mapping groups from the source domain to different groups in the destination domain
+Restore-GptPolicy -Path . -IdentityMapping @{
+	'S-D-FileServerAdmins' = 'SD1-FSAdmins'
+}
+```
