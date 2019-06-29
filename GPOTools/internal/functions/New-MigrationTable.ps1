@@ -1,5 +1,30 @@
 ﻿function New-MigrationTable
 {
+<#
+	.SYNOPSIS
+		Creates a new migration table used for GPO imports.
+	
+	.DESCRIPTION
+		Creates a new migration table used for GPO imports.
+		In this table, all source identities get matched to fitting destination identities.
+		This ensures, that all identity references within GPOs remain intact.
+	
+	.PARAMETER Path
+		The path where to spawn the migration table.
+		Specify a folder, the file will be named '<DomainName>.migtable'
+	
+	.PARAMETER BackupPath
+		The path where the GPO backups are stored.
+	
+	.PARAMETER Domain
+		The domain the backup will be restored to.
+		Defaults to the current user's domain.
+	
+	.EXAMPLE
+		PS C:\> New-MigrationTable -Path '.' -BackupPath '.'
+	
+		Creates a migration table in the current path and looks in the current path for backup folders.
+#>
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]
