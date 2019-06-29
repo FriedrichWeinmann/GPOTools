@@ -24,7 +24,13 @@
 	
 	.PARAMETER ErrorData
 		Any error data to add to the report
+	
+	.EXAMPLE
+		PS C:\> New-ImportResult -Action 'Importing Policy Objects' -Step 'Import Object' -Target $gpoEntry -Success $true -Data $gpoEntry, $migrationTablePath
+	
+		Creates a new object representing a successful GPO import.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]

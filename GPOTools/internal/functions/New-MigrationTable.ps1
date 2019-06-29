@@ -25,6 +25,7 @@
 	
 		Creates a migration table in the current path and looks in the current path for backup folders.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]

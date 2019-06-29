@@ -19,6 +19,7 @@
 	
 		Resolves the source identity into a destination security principal.
 #>
+	[OutputType([System.Security.Principal.IdentityReference])]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]
