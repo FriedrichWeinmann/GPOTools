@@ -19,6 +19,7 @@
 	
 		Resolves the source identity into a destination security principal.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseOutputTypeCorrectly", "")]
 	[OutputType([System.Security.Principal.IdentityReference])]
 	[CmdletBinding()]
 	param (

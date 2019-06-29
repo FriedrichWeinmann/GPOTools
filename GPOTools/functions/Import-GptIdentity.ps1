@@ -50,7 +50,6 @@
 		if (-not $resolvedPath) { throw "Could not find identities file in $($pathItem.FullName)" }
 		
 		$domainSID = (Get-ADDomain -Server $Domain).DomainSID.Value
-		$domainName = (Get-ADDomain -Server $Domain).Name
 		
 		# Declare Module scope index of identities and what they map to
 		$script:identityMapping = New-Object 'System.Collections.Generic.List[Object]'

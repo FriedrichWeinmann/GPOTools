@@ -56,6 +56,7 @@
 		#region Utility Functions
 		function Update-GpoPermission
 		{
+			[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
 			[CmdletBinding()]
 			param (
 				$ADObject,
