@@ -1,5 +1,3 @@
 ﻿# Changelog
-## 1.0.0 (2019-06-04)
- - New: Some Stuff
- - Upd: Moar Stuff
- - Fix: Much Stuff
+## 0.1.0 (2019-06-29)
+ - Initial release
