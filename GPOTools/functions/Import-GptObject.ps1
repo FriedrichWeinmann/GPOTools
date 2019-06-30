@@ -44,8 +44,8 @@
 			throw "Import path not found: $Path"
 		}
 		if ((Get-Item -Path $Path).Extension -eq '.csv') { $gpoFile = Get-Item -Path $Path }
-		elseif ($importItem = Test-Path -Path (Join-Path -Path $Path -ChildPath 'gp_object_*.csv')) { $gpoFile = Get-Item (Join-Path -Path $Path -ChildPath 'gp_object_*.csv') }
-		elseif ($importItem = Test-Path -Path (Join-Path -Path (Join-Path -Path $Path -ChildPath 'GPO') -ChildPath 'gp_object_*.csv')) { $gpoFile = Get-Item (Join-Path -Path (Join-Path -Path $Path -ChildPath 'GPO') -ChildPath 'gp_object_*.csv') }
+		elseif (Test-Path -Path (Join-Path -Path $Path -ChildPath 'gp_object_*.csv')) { $gpoFile = Get-Item (Join-Path -Path $Path -ChildPath 'gp_object_*.csv') }
+		elseif (Test-Path -Path (Join-Path -Path (Join-Path -Path $Path -ChildPath 'GPO') -ChildPath 'gp_object_*.csv')) { $gpoFile = Get-Item (Join-Path -Path (Join-Path -Path $Path -ChildPath 'GPO') -ChildPath 'gp_object_*.csv') }
 		else
 		{
 			New-ImportResult -Action 'Importing Policy Objects' -Step 'Validating import path' -Target $Path -Success $false
