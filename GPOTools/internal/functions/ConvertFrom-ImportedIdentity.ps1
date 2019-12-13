@@ -39,7 +39,7 @@
 			'group'
 			{
 				#TODO: Implement Domain Resolution
-				try { $domainObject = Resolve-DomainMapping -DomainSid ($Permission.SID -as [System.Security.Principal.SecurityIdentifier]).DomainSID.Value -DomainFqdn $Permission.DomainFqdn -DomainName $Permission.DomainName }
+				try { $domainObject = Resolve-DomainMapping -DomainSid ($Permission.SID -as [System.Security.Principal.SecurityIdentifier]).AccountDomainSid.Value -DomainFqdn $Permission.DomainFqdn -DomainName $Permission.DomainName }
 				catch { throw "Cannot resolve domain $($Permission.DomainFqdn) for $($Permission.Group) $($Permission.SID)! $_" }
 
 				if ($Permission.IsBuiltIn -like 'true')

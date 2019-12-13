@@ -109,7 +109,7 @@
 				#region Case: Domain Specific BuiltIn Principal
 				elseif ($importEntry.IsBuiltIn -eq 'True')
 				{
-					try { $domainObject = Resolve-DomainMapping -DomainSid ($importEntry.SID -as [System.Security.Principal.SecurityIdentifier]).DomainSID.Value -DomainFqdn $importEntry.DomainFqdn -DomainName $importEntry.DomainName }
+					try { $domainObject = Resolve-DomainMapping -DomainSid ($importEntry.SID -as [System.Security.Principal.SecurityIdentifier]).AccountDomainSid.Value -DomainFqdn $importEntry.DomainFqdn -DomainName $importEntry.DomainName }
 					catch { throw "Cannot resolve domain $($importEntry.DomainFqdn) for $($importEntry.Group) $($importEntry.Name)! $_" }
 
 					$targetSID = '{0}-{1}' -f $domainObject.DomainSID, $importEntry.RID
@@ -127,7 +127,7 @@
 				#region Case: Custom Principal
 				else
 				{
-					try { $domainObject = Resolve-DomainMapping -DomainSid ($importEntry.SID -as [System.Security.Principal.SecurityIdentifier]).DomainSID.Value -DomainFqdn $importEntry.DomainFqdn -DomainName $importEntry.DomainName }
+					try { $domainObject = Resolve-DomainMapping -DomainSid ($importEntry.SID -as [System.Security.Principal.SecurityIdentifier]).AccountDomainSid.Value -DomainFqdn $importEntry.DomainFqdn -DomainName $importEntry.DomainName }
 					catch { throw "Cannot resolve domain $($importEntry.DomainFqdn) for $($importEntry.Group) $($importEntry.Name)! $_" }
 
 					$adObject = Get-ADObject -Server $domainObject.DNSRoot -LDAPFilter "(&(objectClass=$($importEntry.Type))(name=$($importEntry.Name)))"
