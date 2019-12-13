@@ -55,7 +55,7 @@
 	process
 	{
 		Write-Verbose "Importing Identities"
-		Import-GptIdentity @common -Name $Name -Mapping $IdentityMapping
+		Import-GptIdentity @common -Mapping $IdentityMapping
 		Write-Verbose "Importing WMI Filters"
 		Import-GptWmiFilter @common
 		Write-Verbose "Importing Objects"

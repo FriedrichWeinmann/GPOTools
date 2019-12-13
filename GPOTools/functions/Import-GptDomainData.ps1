@@ -56,35 +56,35 @@
 			}
 		}
 
-		foreach ($domain in $domains) {
+		foreach ($domainItem in $domains) {
 			foreach ($sourceDomainEntry in $domainImport.ForestDomains) {
-				if ($sourceDomainEntry.Name -eq $domain.Name) {
-					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domain.ADObject
+				if ($sourceDomainEntry.Name -eq $domainItem.Name) {
+					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domainItem.ADObject
 				}
 			}
 		}
-		foreach ($domain in $domains) {
+		foreach ($domainItem in $domains) {
 			foreach ($sourceDomainEntry in $domainImport.ForestDomains) {
-				if ($sourceDomainEntry.Fqdn -eq $domain.Fqdn) {
-					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domain.ADObject
+				if ($sourceDomainEntry.Fqdn -eq $domainItem.Fqdn) {
+					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domainItem.ADObject
 				}
 			}
 		}
-		foreach ($domain in $domains) {
+		foreach ($domainItem in $domains) {
 			foreach ($sourceDomainEntry in $domainImport.ForestDomains) {
-				if ($sourceDomainEntry.SID -eq $domain.SID) {
-					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domain.ADObject
+				if ($sourceDomainEntry.SID -eq $domainItem.SID) {
+					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domainItem.ADObject
 				}
 			}
 		}
 		$sourceDomain = $domainImport.ForestDomains | Where-Object IsTarget
 		$sourceForestRootDomain = $domainImport.ForestDomains | Where-Object IsRootDomain
-		foreach ($domain in $domains) {
-			if ($domain.IsRootDomain) {
-				Register-GptDomainMapping -SourceName $sourceForestRootDomain.Name -SourceFQDN $sourceForestRootDomain.Fqdn -SourceSID $sourceForestRootDomain.SID -Destination $domain.ADObject
+		foreach ($domainItem in $domains) {
+			if ($domainItem.IsRootDomain) {
+				Register-GptDomainMapping -SourceName $sourceForestRootDomain.Name -SourceFQDN $sourceForestRootDomain.Fqdn -SourceSID $sourceForestRootDomain.SID -Destination $domainItem.ADObject
 			}
-			if ($domain.IsTarget) {
-				Register-GptDomainMapping -SourceName $sourceDomain.Name -SourceFQDN $sourceDomain.Fqdn -SourceSID $sourceDomain.SID -Destination $domain.ADObject
+			if ($domainItem.IsTarget) {
+				Register-GptDomainMapping -SourceName $sourceDomain.Name -SourceFQDN $sourceDomain.Fqdn -SourceSID $sourceDomain.SID -Destination $domainItem.ADObject
 			}
 		}
 	}

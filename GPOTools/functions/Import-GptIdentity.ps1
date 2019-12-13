@@ -49,6 +49,8 @@
 		else { $resolvedPath = (Get-ChildItem -Path $pathItem.FullName -Filter 'gp_Identities*.csv' | Select-Object -First 1).FullName }
 		if (-not $resolvedPath) { throw "Could not find identities file in $($pathItem.FullName)" }
 		
+		$rootDomain = (Get-ADForest -Server $Domain).RootDomain
+
 		# Declare Module scope index of identities and what they map to
 		$script:identityMapping = New-Object 'System.Collections.Generic.List[Object]'
 		

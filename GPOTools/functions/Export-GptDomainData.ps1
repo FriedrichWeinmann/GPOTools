@@ -37,7 +37,7 @@
 	process
 	{
 		$domainObject = Get-ADDomain -Server $Domain
-		$targetDomain = [pscustomobject]@{
+		$sourceDomain = [pscustomobject]@{
 			Domain	      = $Domain
 			DomainDNSName = $domainObject.DNSRoot
 			NetBIOSName   = $domainObject.NetBIOSName
@@ -60,7 +60,7 @@
 		}
 
 		[PSCustomObject]@{
-			SourceDomain = $targetDomain
+			SourceDomain = $sourceDomain
 			ForestDomains = $domains
 		} | Export-Clixml -Path (Join-Path -Path $resolvedPath -ChildPath 'backup.clixml')
 	}
