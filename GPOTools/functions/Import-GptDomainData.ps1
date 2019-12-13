@@ -44,7 +44,7 @@
 
 		$forestObject = Get-ADForest -Server $Domain
 		$targetDomain = Get-ADDomain -Server $Domain
-		$domains = $forestObject.Domains | Get-ADDomain -Server $Domain | ForEach-Object {
+		$domains = $forestObject.Domains | Foreach-Object { Get-ADDomain -Server $_ } | ForEach-Object {
 			[PSCustomObject]@{
 				DistinguishedName = $_.DistinguishedName
 				Name			  = $_.Name
