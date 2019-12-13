@@ -57,7 +57,9 @@
 		}
 		
 		#region Collect information for unknown domain
-		$domainObject = Get-ADDomain -Server $Domain
+		if ($Domain -as [System.Security.Principal.SecurityIdentifier]) { $domainObject = Get-ADDomain -Identity $Domain -ErrorAction Stop }
+		else { $domainObject = Get-ADDomain -Server $Domain -ErrorAction Stop }
+
 		$domainObjectProcessed = [PSCustomObject]@{
 			DistinguishedName = $domainObject.DistinguishedName
 			Name			  = $domainObject.Name

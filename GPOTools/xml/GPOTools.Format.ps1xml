@@ -1,31 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-16"?>
 <Configuration>
-	<ViewDefinitions>
-		<!-- Foo.Bar -->
-		<View>
-			<Name>Foo.Bar</Name>
-			<ViewSelectedBy>
-				<TypeName>Foo.Bar</TypeName>
-			</ViewSelectedBy>
-			<TableControl>
-				<AutoSize/>
-				<TableHeaders>
-					<TableColumnHeader/>
-					<TableColumnHeader/>
-				</TableHeaders>
-				<TableRowEntries>
-					<TableRowEntry>
-						<TableColumnItems>
-							<TableColumnItem>
-								<PropertyName>Foo</PropertyName>
-							</TableColumnItem>
-							<TableColumnItem>
-								<PropertyName>Bar</PropertyName>
-							</TableColumnItem>
-						</TableColumnItems>
-					</TableRowEntry>
-				</TableRowEntries>
-			</TableControl>
-		</View>
-	</ViewDefinitions>
+    <ViewDefinitions>
+        <!-- GPOTools.ImportResult -->
+        <View>
+            <Name>GPOTools.ImportResult</Name>
+            <ViewSelectedBy>
+                <TypeName>GPOTools.ImportResult</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <AutoSize/>
+                <TableHeaders>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                    <TableColumnHeader/>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Action</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Step</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Success</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Target</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+    </ViewDefinitions>
 </Configuration>

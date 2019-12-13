@@ -95,8 +95,12 @@
 					try { $targetName = ([System.Security.Principal.SecurityIdentifier]$importEntry.SID).Translate([System.Security.Principal.NTAccount]).Value }
 					catch
 					{
-						Write-Warning "Failed to translate identity: $($importEntry.Name) ($($importEntry.SID))"
-						continue
+						$adObject = Get-ADObject -Server $rootDomain -LDAPFilter "(objectSID=$($importEntry.SID))" -Properties Name
+						if (-not $adObject) {
+							Write-Warning "Failed to translate identity: $($importEntry.Name) ($($importEntry.SID))"
+							continue
+						}
+						$targetName = $adObject.Name
 					}
 					$script:identityMapping.Add(($importEntry | Select-Object *, $select_TargetName))
 				}
