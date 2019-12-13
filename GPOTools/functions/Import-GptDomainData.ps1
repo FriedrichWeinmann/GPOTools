@@ -44,7 +44,7 @@
 
 		$forestObject = Get-ADForest -Server $Domain
 		$targetDomain = Get-ADDomain -Server $Domain
-		$domains = $forestObject.Domains | Foreach-Object { Get-ADDomain -Server $_ } | ForEach-Object {
+		$domains = $forestObject.Domains | Foreach-Object { Get-ADDomain -Server $_ -Identity $_ } | ForEach-Object {
 			[PSCustomObject]@{
 				DistinguishedName = $_.DistinguishedName
 				Name			  = $_.Name
@@ -80,11 +80,11 @@
 		$sourceDomain = $domainImport.ForestDomains | Where-Object IsTarget
 		$sourceForestRootDomain = $domainImport.ForestDomains | Where-Object IsRootDomain
 		foreach ($domain in $domains) {
-			if ($domain.IsTarget) {
-				Register-GptDomainMapping -SourceName $sourceDomain.Name -SourceFQDN $sourceDomain.Fqdn -SourceSID $sourceDomain.SID -Destination $domain.ADObject
-			}
 			if ($domain.IsRootDomain) {
 				Register-GptDomainMapping -SourceName $sourceForestRootDomain.Name -SourceFQDN $sourceForestRootDomain.Fqdn -SourceSID $sourceForestRootDomain.SID -Destination $domain.ADObject
+			}
+			if ($domain.IsTarget) {
+				Register-GptDomainMapping -SourceName $sourceDomain.Name -SourceFQDN $sourceDomain.Fqdn -SourceSID $sourceDomain.SID -Destination $domain.ADObject
 			}
 		}
 	}

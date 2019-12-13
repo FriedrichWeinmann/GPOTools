@@ -86,6 +86,7 @@
 					}
 				}
 			}
+			$rootDomain = (Get-ADForest -Server $domainFQDN).RootDomain
 			#endregion Resolve Principal Domain
 			
 			if (-not $script:principals[$domainFQDN]) { $script:principals[$domainFQDN] = @{ } }
@@ -100,6 +101,8 @@
 			if ($identity -as [System.Security.Principal.SecurityIdentifier])
 			{
 				$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$identity)" -Properties ObjectSID
+				# Handle Builtin SIDs that only exist in the root domain
+				if (-not $adObject) { $adObject = Get-ADObject -Server $rootDomain -LDAPFilter "(objectSID=$identity)" -Properties ObjectSID }
 			}
 			elseif (Test-IsDistinguishedName -Name $identity)
 			{

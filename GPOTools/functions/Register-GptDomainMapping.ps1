@@ -40,7 +40,7 @@
         [string]
         $SourceFQDN,
 
-        [string9]
+        [string]
         $SourceSID,
 
         $Destination,

@@ -43,7 +43,7 @@
     )
 
     if (-not $script:domainMapping) {
-        throw "No domain mappings loaded yet. Run Import-GptDomain or Register-GptDomainMapping to initialize the domain resolution table."
+        throw "No domain mappings loaded yet. Run Import-GptDomainData or Register-GptDomainMapping to initialize the domain resolution table."
     }
 
     if ($DomainSid -and $script:domainMapping.Sid[$DomainSid]) {
