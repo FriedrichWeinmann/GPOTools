@@ -6,12 +6,20 @@
 	
 	.DESCRIPTION
 		Export WMI Filters.
-		WMI Filters to export are picked up by the GPÜO they are assigned to.
+		By default, all filters are exported.
+
+		Use -ConstrainExport parameter to switch this behavior to:
+		WMI Filters to export are picked up by the GPO they are assigned to.
 		Unassigned filters are ignored.
 	
 	.PARAMETER Path
 		The path where to create the export.
 		Must be an existing folder.
+
+	.PARAMETER ConstrainExport
+		Don't export all WMI filters, instead:
+		WMI Filters to export are picked up by the GPO they are assigned to.
+		Unassigned filters are ignored.
 	
 	.PARAMETER Name
 		Filter GPOs to process by name.
@@ -33,6 +41,9 @@
 		[Parameter(Mandatory = $true)]
 		[string]
 		$Path,
+
+		[switch]
+		$ConstrainExport,
 		
 		[string]
 		$Name = '*',
@@ -61,6 +72,8 @@
 	}
 	process
 	{
+		if (-not $ConstrainExport) { return }
+
 		$gpoObjects = $GpoObject
 		if (-not $GpoObject)
 		{
@@ -73,6 +86,11 @@
 	}
 	end
 	{
-		$foundFilterHash.Values | Where-Object { $_ } | Export-Csv -Path (Join-Path -Path $Path -ChildPath "gp_wmifilters_$($Domain).csv") -Encoding UTF8 -NoTypeInformation
+		if ($ConstrainExport) {
+			$foundFilterHash.Values | Where-Object { $_ } | Export-Csv -Path (Join-Path -Path $Path -ChildPath "gp_wmifilters_$($Domain).csv") -Encoding UTF8 -NoTypeInformation
+		}
+		else {
+			$allFilterHash.Values | Where-Object { $_ } | Export-Csv -Path (Join-Path -Path $Path -ChildPath "gp_wmifilters_$($Domain).csv") -Encoding UTF8 -NoTypeInformation
+		}
 	}
 }
