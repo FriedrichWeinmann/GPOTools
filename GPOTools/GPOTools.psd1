@@ -21,7 +21,7 @@
 	Description = 'Tools for GPO Management & Migration'
 	
 	# Minimum version of the Windows PowerShell engine required by this module
-	PowerShellVersion = '5.0'
+	PowerShellVersion = '5.1'
 	
 	# Modules that must be imported into the global environment prior to importing
 	# this module
@@ -47,23 +47,25 @@
 		'Export-GptObject'
 		'Export-GptPermission'
 		'Export-GptWmiFilter'
+		'Get-GptPrincipal'
 		'Import-GptDomainData'
 		'Import-GptIdentity'
 		'Import-GptLink'
 		'Import-GptObject'
 		'Import-GptPermission'
 		'Import-GptWmiFilter'
+		'Register-GptDomainMapping'
 		'Restore-GptPolicy'
 	)
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = ''
+	CmdletsToExport = @()
 	
 	# Variables to export from this module
-	VariablesToExport = ''
+	VariablesToExport = @()
 	
 	# Aliases to export from this module
-	AliasesToExport = ''
+	AliasesToExport = @()
 	
 	# List of all modules packaged with this module
 	ModuleList = @()

@@ -47,9 +47,9 @@
 		$writePath = Join-Path -Path $resolvedPath -ChildPath "$Domain.migtable"
 		
 		#region Resolving source and destination Domain Names
-		$domainObject = Get-ADDomain -Server $Domain
-		$destDomainDNS = $domainObject.DNSRoot
-		$destDomainNetBios = $domainObject.NetBIOSName
+		$domainData = Get-DomainData -Domain $Domain
+		$destDomainDNS = $domainData.Fqdn
+		$destDomainNetBios = $domainData.ADObject.NetBIOSName
 		
 		if ($script:sourceDomainData)
 		{
@@ -80,12 +80,12 @@
 			else
 			{
 				[PSCustomObject]@{
-					Source = ('{0}\{1}' -f $sourceDomainNetBios, $identity.Name)
-					Target = ('{0}\{1}' -f $destDomainNetBios, $identity.Target)
+					Source = ('{0}\{1}' -f $identity.DomainName, $identity.Name)
+					Target = ('{0}\{1}' -f $identity.TargetDomain.Name, $identity.Target)
 				}
 				[PSCustomObject]@{
-					Source = ('{0}@{1}' -f $identity.Name, $sourceDomainDNS)
-					Target = ('{0}@{1}' -f $identity.Target, $destDomainDNS)
+					Source = ('{0}@{1}' -f $identity.Name, $identity.DomainFqdn)
+					Target = ('{0}@{1}' -f $identity.Target, $identity.TargetDomain.DNSRoot)
 				}
 			}
 		}
