@@ -100,13 +100,13 @@
 			#region Resolve User in AD
 			if ($identity -as [System.Security.Principal.SecurityIdentifier])
 			{
-				$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$identity)" -Properties ObjectSID
+				$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$identity)" -Properties ObjectSID, SamAccountName
 				# Handle Builtin SIDs that only exist in the root domain
-				if (-not $adObject) { $adObject = Get-ADObject -Server $rootDomain -LDAPFilter "(objectSID=$identity)" -Properties ObjectSID }
+				if (-not $adObject) { $adObject = Get-ADObject -Server $rootDomain -LDAPFilter "(objectSID=$identity)" -Properties ObjectSID, SamAccountName }
 			}
 			elseif (Test-IsDistinguishedName -Name $identity)
 			{
-				$adObject = Get-ADObject -Server ($identity | ConvertTo-DnsDomainName) -Identity $identity -Properties ObjectSID
+				$adObject = Get-ADObject -Server ($identity | ConvertTo-DnsDomainName) -Identity $identity -Properties ObjectSID, SamAccountName
 			}
 			elseif ($identity -like "*\*")
 			{
@@ -116,7 +116,7 @@
 					Write-Warning "Failed to translate identity: $identity"
 					continue
 				}
-				$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$sidName)" -Properties ObjectSID
+				$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$sidName)" -Properties ObjectSID, SamAccountName
 				if (-not $adObject)
 				{
 					$script:principals[$domainFQDN][$identity] = [pscustomobject]@{
@@ -153,11 +153,11 @@
 						$script:principals[$domainFQDN][$identity]
 						continue
 					}
-					$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$sidName)" -Properties ObjectSID
+					$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$sidName)" -Properties ObjectSID, SamAccountName
 				}
 				catch
 				{
-					$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(Name=$identity)" -Properties ObjectSID
+					$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(SamAccountName=$identity)" -Properties ObjectSID, SamAccountName
 				}
 			}
 			if (-not $adObject -or -not $adObject.ObjectSID)
@@ -169,7 +169,7 @@
 			
 			$script:principals[$domainFQDN][$identity] = [pscustomobject]@{
 				DistinguishedName = $adObject.DistinguishedName
-				Name			  = $adObject.Name
+				Name			  = $adObject.SamAccountName
 				SID			      = $adObject.ObjectSID.Value
 				RID			      = $adObject.ObjectSID.Value.ToString().Split("-")[-1]
 				Type			  = $adObject.ObjectClass

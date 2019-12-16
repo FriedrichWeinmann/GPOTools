@@ -36,7 +36,7 @@
 	# TypesToProcess = @('xml\GPOTools.Types.ps1xml')
 	
 	# Format files (.ps1xml) to be loaded when importing this module
-	# FormatsToProcess = @('xml\GPOTools.Format.ps1xml')
+	FormatsToProcess = @('xml\GPOTools.Format.ps1xml')
 	
 	# Functions to export from this module
 	FunctionsToExport = @(

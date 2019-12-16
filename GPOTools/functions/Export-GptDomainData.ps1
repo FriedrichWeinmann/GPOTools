@@ -54,7 +54,7 @@
 				SID			      = $_.DomainSID
 				Fqdn			  = $_.DNSRoot
 				ADObject		  = $_
-				IsTarget          = $_.DomainSID -eq $targetDomain.DomainSID
+				IsTarget          = $_.DomainSID -eq $sourceDomain.DomainSID
 				IsRootDomain      = $_.DNSRoot -eq $forestObject.RootDomain
 			}
 		}

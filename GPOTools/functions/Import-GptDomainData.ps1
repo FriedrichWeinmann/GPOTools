@@ -83,6 +83,8 @@
 			if ($domainItem.IsRootDomain) {
 				Register-GptDomainMapping -SourceName $sourceForestRootDomain.Name -SourceFQDN $sourceForestRootDomain.Fqdn -SourceSID $sourceForestRootDomain.SID -Destination $domainItem.ADObject
 			}
+		}
+		foreach ($domainItem in $domains) {
 			if ($domainItem.IsTarget) {
 				Register-GptDomainMapping -SourceName $sourceDomain.Name -SourceFQDN $sourceDomain.Fqdn -SourceSID $sourceDomain.SID -Destination $domainItem.ADObject
 			}
