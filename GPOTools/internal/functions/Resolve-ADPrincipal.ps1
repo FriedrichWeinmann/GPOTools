@@ -61,6 +61,8 @@
 		foreach ($identity in $Name)
 		{
 			if ($identity -in $principalsToIgnore) { continue }
+
+			Write-Verbose "[Resolve-ADPrincipal] Resolving $identity"
 			
 			#region Resolve Principal Domain
 			$domainFQDN = $defaultDomainFQDN

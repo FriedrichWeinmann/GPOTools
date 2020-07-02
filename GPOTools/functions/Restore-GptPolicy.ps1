@@ -50,7 +50,7 @@
 		}
 		
 		Write-Verbose "Importing Domain Data"
-		Import-GptDomainData -Path $Path
+		Import-GptDomainData @common
 	}
 	process
 	{
