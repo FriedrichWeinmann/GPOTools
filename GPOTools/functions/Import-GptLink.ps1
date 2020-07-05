@@ -141,7 +141,14 @@
 				}
 				catch
 				{
-					New-ImportResult -Action 'Importing Group Policy Links' -Step 'Applying Link' -Target $linkItem.GpoName -Data $linkItem -Success $false -ErrorData $_
+					if ($_.Exception.InnerException.HResult -eq 0x800700B7)
+					{
+						New-ImportResult -Action 'Importing Group Policy Links' -Step 'Applying Link: Already Exists' -Target $linkItem.GpoName -Data $linkItem -Success $true -ErrorData $_
+					}
+					else
+					{
+						New-ImportResult -Action 'Importing Group Policy Links' -Step 'Applying Link' -Target $linkItem.GpoName -Data $linkItem -Success $false -ErrorData $_
+					}
 				}
 				
 				$insertIndex++

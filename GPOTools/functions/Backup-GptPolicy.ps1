@@ -56,15 +56,26 @@
 		$resolvedPath = (Resolve-Path -Path $Path).ProviderPath
 		$policyFolder = New-Item -Path $resolvedPath -Name GPO -ItemType Directory -Force
 		Write-Verbose "Resolved output path to: $resolvedPath"
+		
+		$gpoObjects = @()
 	}
 	process
 	{
 		Write-Verbose "Resolving GPOs to process"
-		$gpoObjects = $GpoObject
 		if (-not $GpoObject)
 		{
 			$gpoObjects = Get-GPO -All -Domain $Domain | Where-Object DisplayName -Like $Name
 		}
+		else
+		{
+			foreach ($object in $GpoObject)
+			{
+				$gpoObjects += $object
+			}
+		}
+	}
+	end
+	{
 		Write-Verbose "Exporting GPO Objects"
 		$gpoObjects | Export-GptObject -Path $policyFolder.FullName -Domain $Domain
 		Write-Verbose "Exporting GP Links"

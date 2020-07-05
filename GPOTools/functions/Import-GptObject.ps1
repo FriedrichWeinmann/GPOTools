@@ -88,6 +88,8 @@
 					$wmiFilter = Get-ADObject -SearchBase "CN=SOM,CN=WMIPolicy,$((Get-ADDomain -Server $pdcEmulator).SystemsContainer)" -LDAPFilter "(&(objectClass=msWMI-Som)(msWMI-Name=$($gpoEntry.WmiFilter)))"
 					Set-ADObject -Identity $importedGPO.Path -Replace @{ gPCWQLFilter = "[$Domain;$($wmiFilter.Name);0]" } -Server $pdcEmulator
 				}
+				# Mapped network drives are not correctly covered by Migration Tables
+				Update-NetworkDrive -GpoName $gpoEntry.DisplayName -Domain $Domain
 				New-ImportResult -Action 'Importing Policy Objects' -Step 'Import Object' -Target $gpoEntry -Success $true -Data $gpoEntry, $migrationTablePath
 			}
 			catch

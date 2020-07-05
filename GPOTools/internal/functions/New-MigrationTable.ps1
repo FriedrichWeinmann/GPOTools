@@ -132,6 +132,29 @@
 				}
 			}
 		}
+		
+		# Additionally scan backup for share mappings, as those won't be found by default
+		foreach ($gpoFolder in (Get-ChildItem -Path $resolvedBackupPath -Directory | Where-Object Name -Match '^(\{{0,1}([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}\}{0,1})$'))
+		{
+			$driveXmlPath = Join-Path -Path $gpoFolder.FullName -ChildPath 'DomainSysvol\GPO\User\Preferences\Drives\Drives.xml'
+			if (-not (Test-Path -Path $driveXmlPath)) { continue }
+			
+			try { $driveXmlData = [xml](Get-Content -Path $driveXmlPath) }
+			catch { continue }
+			
+			foreach ($driveSet in $driveXmlData.Drives.Drive)
+			{
+				if ($driveSet.Properties.Path -like "\\$sourceDomainDNS\*")
+				{
+					$null = $migrationTable.AddEntry($driveSet.Properties.Path, $constants.EntryTypeUNCPath, $driveSet.Properties.Path.Replace("\\$sourceDomainDNS\", "\\$destDomainDNS\"))
+				}
+				if ($driveSet.Properties.Path -like "\\$sourceDomainNetBios\*")
+				{
+					$null = $migrationTable.AddEntry($driveSet.Properties.Path, $constants.EntryTypeUNCPath, $driveSet.Properties.Path.Replace("\\$sourceDomainNetBios\", "\\$destDomainNetBios\"))
+				}
+			}
+		}
+		
 		#endregion Applying identity and UNC mappings
 		
 		$migrationTable.Save($writePath)

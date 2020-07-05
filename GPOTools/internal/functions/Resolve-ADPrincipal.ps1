@@ -88,6 +88,16 @@
 					}
 				}
 			}
+			elseif ($identity -like "*\*")
+			{
+				try { $domainObject = Get-DomainData -Domain $identity.Split("\")[0] -ErrorAction Stop }
+				catch { }
+				if ($domainObject)
+				{
+					$domainFQDN = $domainObject.Fqdn
+					$domainName = $domainObject.Name
+				}
+			}
 			$rootDomain = (Get-ADForest -Server $domainFQDN).RootDomain
 			#endregion Resolve Principal Domain
 			
@@ -118,7 +128,8 @@
 					Write-Warning "Failed to translate identity: $identity"
 					continue
 				}
-				$adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$sidName)" -Properties ObjectSID, SamAccountName
+				try { $adObject = Get-ADObject -Server $domainFQDN -LDAPFilter "(objectSID=$sidName)" -Properties ObjectSID, SamAccountName -ErrorAction Stop }
+				catch { }
 				if (-not $adObject)
 				{
 					$script:principals[$domainFQDN][$identity] = [pscustomobject]@{

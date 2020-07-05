@@ -3,7 +3,7 @@
 	RootModule = 'GPOTools.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '0.2.0'
+	ModuleVersion = '0.3.0'
 	
 	# ID used to uniquely identify this module
 	GUID = '8f9c10fa-1b99-4dc8-b6ed-1ec96e48e23c'
