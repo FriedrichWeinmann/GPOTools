@@ -20,6 +20,12 @@
 	
 	.PARAMETER Domain
 		The domain to generate the dump from.
+
+	.PARAMETER GpoName
+		The name filter pattern of the GPOs to parse for relevant identities export.
+		
+	.PARAMETER GpoObject
+		Specific GPO object to parse for relevant identities to export.
 	
 	.EXAMPLE
 		PS C:\> Export-GptIdentity -Path '.'
