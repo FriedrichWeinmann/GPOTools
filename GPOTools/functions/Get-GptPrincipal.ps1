@@ -34,6 +34,8 @@
 	
 		Returns the relevant principals from all GPOs in the current domain.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSPossibleIncorrectUsageOfAssignmentOperator', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding(DefaultParameterSetName = 'GPO')]
 	param (
 		[Parameter(ParameterSetName = "Path")]

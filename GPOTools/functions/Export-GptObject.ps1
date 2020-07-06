@@ -25,6 +25,7 @@
 	
 		Generate a GPO export of all GPOs in the current folder.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]

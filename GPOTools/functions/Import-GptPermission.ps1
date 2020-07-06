@@ -31,6 +31,7 @@
 	
 		Import GPO permissions from the current path.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]

@@ -22,6 +22,7 @@
 	
 		Import GPO Links based on the exported links stored in the current path.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]

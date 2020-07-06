@@ -22,6 +22,7 @@
 	
 		Updates the GPO "Share Y:" for the domain contoso.com, remapping the share from the source domain to the destination domain.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]

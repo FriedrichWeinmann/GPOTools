@@ -33,6 +33,7 @@
 	
 		Exports permissions of all GPOs into the current folder.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory = $true)]
