@@ -49,8 +49,8 @@
 		else { $resolvedPath = (Get-ChildItem -Path $pathItem.FullName -Filter 'gp_Identities*.csv' | Select-Object -First 1).FullName }
 		if (-not $resolvedPath) { throw "Could not find identities file in $($pathItem.FullName)" }
 		
-		$domainSID = (Get-ADDomain -Server $Domain).DomainSID.Value
-		
+		$rootDomain = (Get-ADForest -Server $Domain).RootDomain
+
 		# Declare Module scope index of identities and what they map to
 		$script:identityMapping = New-Object 'System.Collections.Generic.List[Object]'
 		
@@ -62,6 +62,10 @@
 		$select_TargetName = @{
 			Name	   = 'Target'
 			Expression = { $targetName }
+		}
+		$select_TargetDomain = @{
+			Name = 'TargetDomain'
+			Expression = { $domainObject }
 		}
 	}
 	process
@@ -91,39 +95,49 @@
 					try { $targetName = ([System.Security.Principal.SecurityIdentifier]$importEntry.SID).Translate([System.Security.Principal.NTAccount]).Value }
 					catch
 					{
-						Write-Warning "Failed to translate identity: $($importEntry.Name) ($($importEntry.SID))"
-						continue
+						$adObject = Get-ADObject -Server $rootDomain -LDAPFilter "(objectSID=$($importEntry.SID))" -Properties Name
+						if (-not $adObject) {
+							Write-Warning "Failed to translate identity: $($importEntry.Name) ($($importEntry.SID))"
+							continue
+						}
+						$targetName = $adObject.Name
 					}
 					$script:identityMapping.Add(($importEntry | Select-Object *, $select_TargetName))
 				}
 				#endregion Case: Native BuiltIn Principal
-				
+
 				#region Case: Domain Specific BuiltIn Principal
 				elseif ($importEntry.IsBuiltIn -eq 'True')
 				{
-					$targetSID = '{0}-{1}' -f $domainSID, $importEntry.RID
-					$adObject = Get-ADObject -Server $Domain -LDAPFilter "(&(objectClass=$($importEntry.Type))(objectSID=$($targetSID)))"
+					try { $domainObject = Resolve-DomainMapping -DomainSid ($importEntry.SID -as [System.Security.Principal.SecurityIdentifier]).AccountDomainSid.Value -DomainFqdn $importEntry.DomainFqdn -DomainName $importEntry.DomainName }
+					catch { throw "Cannot resolve domain $($importEntry.DomainFqdn) for $($importEntry.Group) $($importEntry.Name)! $_" }
+
+					$targetSID = '{0}-{1}' -f $domainObject.DomainSID, $importEntry.RID
+					$adObject = Get-ADObject -Server $domainObject.DNSRoot -LDAPFilter "(&(objectClass=$($importEntry.Type))(objectSID=$($targetSID)))"
 					if (-not $adObject)
 					{
 						Write-Warning "Failed to resolve AD identity: $($importEntry.Name) ($($targetSID))"
 						continue
 					}
 					$targetName = $adObject.Name
-					$script:identityMapping.Add(($importEntry | Select-Object *, $select_TargetName))
+					$script:identityMapping.Add(($importEntry | Select-Object *, $select_TargetName, $select_TargetDomain))
 				}
 				#endregion Case: Domain Specific BuiltIn Principal
 				
 				#region Case: Custom Principal
 				else
 				{
-					$adObject = Get-ADObject -Server $Domain -LDAPFilter "(&(objectClass=$($importEntry.Type))(name=$($importEntry.Name)))"
+					try { $domainObject = Resolve-DomainMapping -DomainSid ($importEntry.SID -as [System.Security.Principal.SecurityIdentifier]).AccountDomainSid.Value -DomainFqdn $importEntry.DomainFqdn -DomainName $importEntry.DomainName }
+					catch { throw "Cannot resolve domain $($importEntry.DomainFqdn) for $($importEntry.Group) $($importEntry.Name)! $_" }
+
+					$adObject = Get-ADObject -Server $domainObject.DNSRoot -LDAPFilter "(&(objectClass=$($importEntry.Type))(name=$($importEntry.Name)))"
 					if (-not $adObject)
 					{
 						Write-Warning "Failed to resolve AD identity: $($importEntry.Name)"
 						continue
 					}
 					$targetName = $adObject.Name
-					$script:identityMapping.Add(($importEntry | Select-Object *, $select_TargetName))
+					$script:identityMapping.Add(($importEntry | Select-Object *, $select_TargetName, $select_TargetDomain))
 				}
 				#endregion Case: Custom Principal
 			}

@@ -4,6 +4,14 @@ The GPOTools module is designed to handle all things GPO.
 
 As a special focus, it tries to manage migrations, backup & restore.
 
+Compared to the built-in tools, its backup&restore capability also includes:
+
+- WMI Filter
+- GP Links & Link Order
+- Localized / Renamed builtin accounts & groups mapping
+- Customizable identity mapping
+- Permissions
+
 # Examples
 ## Installing the module
 

@@ -6,9 +6,14 @@
 	
 	.DESCRIPTION
 		Imports domain information of the source domain.
+		Also responsible for mapping domains from the source forest to the destination forest.
 	
 	.PARAMETER Path
 		The path to the file or the folder it resides in.
+
+	.PARAMETER Domain
+		The domain into which to import.
+		Used for automatically calculating domain mappings.
 	
 	.EXAMPLE
 		PS C:\> Import-GptDomainData -Path '.'
@@ -19,7 +24,10 @@
 	Param (
 		[Parameter(Mandatory = $true)]
 		[string]
-		$Path
+		$Path,
+		
+		[string]
+		$Domain = $env:USERDNSDOMAIN
 	)
 	
 	begin
@@ -31,6 +39,55 @@
 	}
 	process
 	{
-		$script:sourceDomainData = Import-Clixml $resolvedPath
+		$domainImport = Import-Clixml $resolvedPath
+		$script:sourceDomainData = $domainImport.SourceDomain
+
+		$forestObject = Get-ADForest -Server $Domain
+		$targetDomain = Get-ADDomain -Server $Domain
+		$domains = $forestObject.Domains | Foreach-Object { Get-ADDomain -Server $_ -Identity $_ } | ForEach-Object {
+			[PSCustomObject]@{
+				DistinguishedName = $_.DistinguishedName
+				Name			  = $_.Name
+				SID			      = $_.DomainSID
+				Fqdn			  = $_.DNSRoot
+				ADObject		  = $_
+				IsTarget          = $_.DomainSID -eq $targetDomain.DomainSID
+				IsRootDomain      = $_.DNSRoot -eq $forestObject.RootDomain
+			}
+		}
+
+		foreach ($domainItem in $domains) {
+			foreach ($sourceDomainEntry in $domainImport.ForestDomains) {
+				if ($sourceDomainEntry.Name -eq $domainItem.Name) {
+					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domainItem.ADObject
+				}
+			}
+		}
+		foreach ($domainItem in $domains) {
+			foreach ($sourceDomainEntry in $domainImport.ForestDomains) {
+				if ($sourceDomainEntry.Fqdn -eq $domainItem.Fqdn) {
+					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domainItem.ADObject
+				}
+			}
+		}
+		foreach ($domainItem in $domains) {
+			foreach ($sourceDomainEntry in $domainImport.ForestDomains) {
+				if ($sourceDomainEntry.SID -eq $domainItem.SID) {
+					Register-GptDomainMapping -SourceName $sourceDomainEntry.Name -SourceFQDN $sourceDomainEntry.Fqdn -SourceSID $sourceDomainEntry.SID -Destination $domainItem.ADObject
+				}
+			}
+		}
+		$sourceDomain = $domainImport.ForestDomains | Where-Object IsTarget
+		$sourceForestRootDomain = $domainImport.ForestDomains | Where-Object IsRootDomain
+		foreach ($domainItem in $domains) {
+			if ($domainItem.IsRootDomain) {
+				Register-GptDomainMapping -SourceName $sourceForestRootDomain.Name -SourceFQDN $sourceForestRootDomain.Fqdn -SourceSID $sourceForestRootDomain.SID -Destination $domainItem.ADObject
+			}
+		}
+		foreach ($domainItem in $domains) {
+			if ($domainItem.IsTarget) {
+				Register-GptDomainMapping -SourceName $sourceDomain.Name -SourceFQDN $sourceDomain.Fqdn -SourceSID $sourceDomain.SID -Destination $domainItem.ADObject
+			}
+		}
 	}
 }

@@ -55,19 +55,38 @@
 	{
 		$resolvedPath = (Resolve-Path -Path $Path).ProviderPath
 		$policyFolder = New-Item -Path $resolvedPath -Name GPO -ItemType Directory -Force
+		Write-Verbose "Resolved output path to: $resolvedPath"
+		
+		$gpoObjects = @()
 	}
 	process
 	{
-		$gpoObjects = $GpoObject
+		Write-Verbose "Resolving GPOs to process"
 		if (-not $GpoObject)
 		{
 			$gpoObjects = Get-GPO -All -Domain $Domain | Where-Object DisplayName -Like $Name
 		}
+		else
+		{
+			foreach ($object in $GpoObject)
+			{
+				$gpoObjects += $object
+			}
+		}
+	}
+	end
+	{
+		Write-Verbose "Exporting GPO Objects"
 		$gpoObjects | Export-GptObject -Path $policyFolder.FullName -Domain $Domain
+		Write-Verbose "Exporting GP Links"
 		Export-GptLink -Path $resolvedPath -Domain $Domain
+		Write-Verbose "Exporting GP Permissions"
 		$gpoObjects | Export-GptPermission -Path $resolvedPath -Domain $Domain
+		Write-Verbose "Exporting WMI Filters"
 		$gpoObjects | Export-GptWmiFilter -Path $resolvedPath -Domain $Domain
-		Export-GptIdentity -Path $resolvedPath -Domain $Domain -Name $Identity
+		Write-Verbose "Exporting Identities"
+		Export-GptIdentity -Path $resolvedPath -Domain $Domain -Name $Identity -GpoObject $gpoObjects
+		Write-Verbose "Exporting Domain Information"
 		Export-GptDomainData -Path $resolvedPath -Domain $Domain
 	}
 }

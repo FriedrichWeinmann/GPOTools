@@ -3,7 +3,7 @@
 	RootModule = 'GPOTools.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '0.1.0'
+	ModuleVersion = '0.3.0'
 	
 	# ID used to uniquely identify this module
 	GUID = '8f9c10fa-1b99-4dc8-b6ed-1ec96e48e23c'
@@ -21,7 +21,7 @@
 	Description = 'Tools for GPO Management & Migration'
 	
 	# Minimum version of the Windows PowerShell engine required by this module
-	PowerShellVersion = '5.0'
+	PowerShellVersion = '5.1'
 	
 	# Modules that must be imported into the global environment prior to importing
 	# this module
@@ -36,7 +36,7 @@
 	# TypesToProcess = @('xml\GPOTools.Types.ps1xml')
 	
 	# Format files (.ps1xml) to be loaded when importing this module
-	# FormatsToProcess = @('xml\GPOTools.Format.ps1xml')
+	FormatsToProcess = @('xml\GPOTools.Format.ps1xml')
 	
 	# Functions to export from this module
 	FunctionsToExport = @(
@@ -47,23 +47,25 @@
 		'Export-GptObject'
 		'Export-GptPermission'
 		'Export-GptWmiFilter'
+		'Get-GptPrincipal'
 		'Import-GptDomainData'
 		'Import-GptIdentity'
 		'Import-GptLink'
 		'Import-GptObject'
 		'Import-GptPermission'
 		'Import-GptWmiFilter'
+		'Register-GptDomainMapping'
 		'Restore-GptPolicy'
 	)
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = ''
+	CmdletsToExport = @()
 	
 	# Variables to export from this module
-	VariablesToExport = ''
+	VariablesToExport = @()
 	
 	# Aliases to export from this module
-	AliasesToExport = ''
+	AliasesToExport = @()
 	
 	# List of all modules packaged with this module
 	ModuleList = @()

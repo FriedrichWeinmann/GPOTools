@@ -42,6 +42,8 @@
 			$links = $_.gpLink -replace '\]\[', ']_[' -split '_'
 			foreach ($link in $links)
 			{
+				# Skip empty lines
+				if (-not $link) { continue }
 				$path, $state = $link -replace '\[LDAP://' -replace '\]$' -split ';'
 				[PSCustomObject]@{
 					Path    = $Path

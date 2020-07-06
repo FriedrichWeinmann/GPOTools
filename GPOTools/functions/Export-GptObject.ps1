@@ -25,6 +25,7 @@
 	
 		Generate a GPO export of all GPOs in the current folder.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]
@@ -53,6 +54,6 @@
 			}
 		}
 		$null = $gpoObjects | Backup-GPO -Path (Resolve-Path $Path).ProviderPath
-		$gpoObjects | Select-Object DisplayName, ID, Owner, CreationTime, ModificationTime, WmiFilter | Export-Csv -Path (Join-Path -Path $Path -ChildPath "gp_object_$($Domain).csv") -Encoding UTF8 -NoTypeInformation -Append
+		$gpoObjects | Select-Object DisplayName, ID, Owner, CreationTime, ModificationTime, @{ Name = 'WmiFilter'; Expression = { $_.WmiFilter.Name }} | Export-Csv -Path (Join-Path -Path $Path -ChildPath "gp_object_$($Domain).csv") -Encoding UTF8 -NoTypeInformation -Append
 	}
 }

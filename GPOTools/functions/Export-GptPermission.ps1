@@ -33,6 +33,7 @@
 	
 		Exports permissions of all GPOs into the current folder.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory = $true)]
@@ -62,7 +63,9 @@
 		$select_RID = @{ name = 'RID'; expression = { (Resolve-ADPrincipal -Name $_.IdentityReference -Domain $Domain).RID } }
 		$select_IsBuiltin = @{ name = 'IsBuiltIn'; expression = { (Resolve-ADPrincipal -Name $_.IdentityReference -Domain $Domain).IsBuiltIn } }
 		$select_PrincipalType = @{ name = 'PrincipalType'; expression = { (Resolve-ADPrincipal -Name $_.IdentityReference -Domain $Domain).Type } }
-		
+		$select_DomainFqdn = @{ name = 'DomainFqdn'; expression = { (Resolve-ADPrincipal -Name $_.IdentityReference -Domain $Domain).DomainFqdn } }
+		$select_DomainName = @{ name = 'DomainName'; expression = { (Resolve-ADPrincipal -Name $_.IdentityReference -Domain $Domain).DomainName } }
+
 		[System.Collections.ArrayList]$accessList = @()
 	}
 	process
@@ -80,7 +83,7 @@
 			$adObject = Get-ADObject -Identity $gpoItem.Path -Server $gpoItem.DomainName -Properties ntSecurityDescriptor
 			$adObject.ntSecurityDescriptor.Access | Where-Object {
 				$IncludeInherited -or -not $_.IsInherited
-			} | Select-Object $select_Name, $select_Path, '*', $select_SID, $select_RID, $select_IsBuiltin, $select_PrincipalType
+			} | Select-Object $select_Name, $select_Path, '*', $select_SID, $select_RID, $select_IsBuiltin, $select_PrincipalType, $select_DomainFqdn, $select_DomainName
 		}
 		Write-Verbose "Found $($accessData.Count) permission entries."
 		$null = $accessList.AddRange($accessData)

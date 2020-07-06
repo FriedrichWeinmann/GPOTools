@@ -37,13 +37,31 @@
 	process
 	{
 		$domainObject = Get-ADDomain -Server $Domain
-		[pscustomobject]@{
+		$sourceDomain = [pscustomobject]@{
 			Domain	      = $Domain
 			DomainDNSName = $domainObject.DNSRoot
 			NetBIOSName   = $domainObject.NetBIOSName
 			BackupVersion = '1.0.0'
 			Timestamp	  = (Get-Date)
 			DomainSID	  = $domainObject.DomainSID.Value
+		}
+
+		$forestObject = Get-ADForest -Server $Domain
+		$domains = $forestObject.Domains | Foreach-Object { Get-ADDomain -Server $_ -Identity $_ } | ForEach-Object {
+			[PSCustomObject]@{
+				DistinguishedName = $_.DistinguishedName
+				Name			  = $_.Name
+				SID			      = $_.DomainSID
+				Fqdn			  = $_.DNSRoot
+				ADObject		  = $_
+				IsTarget          = $_.DomainSID -eq $sourceDomain.DomainSID
+				IsRootDomain      = $_.DNSRoot -eq $forestObject.RootDomain
+			}
+		}
+
+		[PSCustomObject]@{
+			SourceDomain = $sourceDomain
+			ForestDomains = $domains
 		} | Export-Clixml -Path (Join-Path -Path $resolvedPath -ChildPath 'backup.clixml')
 	}
 }

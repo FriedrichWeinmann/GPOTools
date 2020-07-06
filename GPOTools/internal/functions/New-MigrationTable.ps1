@@ -47,9 +47,9 @@
 		$writePath = Join-Path -Path $resolvedPath -ChildPath "$Domain.migtable"
 		
 		#region Resolving source and destination Domain Names
-		$domainObject = Get-ADDomain -Server $Domain
-		$destDomainDNS = $domainObject.DNSRoot
-		$destDomainNetBios = $domainObject.NetBIOSName
+		$domainData = Get-DomainData -Domain $Domain
+		$destDomainDNS = $domainData.Fqdn
+		$destDomainNetBios = $domainData.ADObject.NetBIOSName
 		
 		if ($script:sourceDomainData)
 		{
@@ -80,12 +80,12 @@
 			else
 			{
 				[PSCustomObject]@{
-					Source = ('{0}\{1}' -f $sourceDomainNetBios, $identity.Name)
-					Target = ('{0}\{1}' -f $destDomainNetBios, $identity.Target)
+					Source = ('{0}\{1}' -f $identity.DomainName, $identity.Name)
+					Target = ('{0}\{1}' -f $identity.TargetDomain.Name, $identity.Target)
 				}
 				[PSCustomObject]@{
-					Source = ('{0}@{1}' -f $identity.Name, $sourceDomainDNS)
-					Target = ('{0}@{1}' -f $identity.Target, $destDomainDNS)
+					Source = ('{0}@{1}' -f $identity.Name, $identity.DomainFqdn)
+					Target = ('{0}@{1}' -f $identity.Target, $identity.TargetDomain.DNSRoot)
 				}
 			}
 		}
@@ -132,6 +132,29 @@
 				}
 			}
 		}
+		
+		# Additionally scan backup for share mappings, as those won't be found by default
+		foreach ($gpoFolder in (Get-ChildItem -Path $resolvedBackupPath -Directory | Where-Object Name -Match '^(\{{0,1}([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}\}{0,1})$'))
+		{
+			$driveXmlPath = Join-Path -Path $gpoFolder.FullName -ChildPath 'DomainSysvol\GPO\User\Preferences\Drives\Drives.xml'
+			if (-not (Test-Path -Path $driveXmlPath)) { continue }
+			
+			try { $driveXmlData = [xml](Get-Content -Path $driveXmlPath) }
+			catch { continue }
+			
+			foreach ($driveSet in $driveXmlData.Drives.Drive)
+			{
+				if ($driveSet.Properties.Path -like "\\$sourceDomainDNS\*")
+				{
+					$null = $migrationTable.AddEntry($driveSet.Properties.Path, $constants.EntryTypeUNCPath, $driveSet.Properties.Path.Replace("\\$sourceDomainDNS\", "\\$destDomainDNS\"))
+				}
+				if ($driveSet.Properties.Path -like "\\$sourceDomainNetBios\*")
+				{
+					$null = $migrationTable.AddEntry($driveSet.Properties.Path, $constants.EntryTypeUNCPath, $driveSet.Properties.Path.Replace("\\$sourceDomainNetBios\", "\\$destDomainNetBios\"))
+				}
+			}
+		}
+		
 		#endregion Applying identity and UNC mappings
 		
 		$migrationTable.Save($writePath)

@@ -31,6 +31,7 @@
 	
 		Import GPO permissions from the current path.
 #>
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory = $true)]
@@ -139,15 +140,8 @@
 			}
 			catch
 			{
-				[pscustomobject]@{
-					Action = 'Update Gpo Permission'
-					Step   = 'Apply File Permission'
-					Target = $Permission.GpoName
-					Success = $false
-					Data   = $Permission
-					Data2  = $accessRule
-					Error  = $_
-				}
+				New-ImportResult -Action 'Update Gpo Permission' -Step 'Apply File Permission' -Target $Permission.GpoName -Success $false -Data $Permission, $accessRule -ErrorData $_
+				continue
 			}
 			#endregion Set File Permissions
 			
@@ -162,7 +156,7 @@
 		
 		if (-not $script:identityMapping)
 		{
-			throw 'Could not find imported identities to match. Please run Import-GptIdentitiy first!'
+			throw 'Could not find imported identities to match. Please run Import-GptIdentity first!'
 		}
 		
 		$domainObject = Get-ADDomain -Server $Domain
