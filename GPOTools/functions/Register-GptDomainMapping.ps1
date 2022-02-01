@@ -64,7 +64,7 @@
         }
         else {
             $params = @{
-                Domain = $Destination
+                Identity = $Destination
                 ErrorAction = 'Stop'
             }
             if ($Server) { $params['Server'] = $Server }
